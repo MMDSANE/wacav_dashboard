@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboardstyle.css' %}">
+    <title>
+    Dashboard|
+        {% block title %} {% endblock %}
+    </title>
+
+{% block head %} {% endblock %}
+</head>
+
+<body>
+{#{% include 'partials/header.html' %}#}
+{% include 'partials/navigation.html' %}
+{% block content %} {% endblock %}
+<script src="{% static 'js/dashboardscript.js' %}"></script>
+
+</body>
+</html>

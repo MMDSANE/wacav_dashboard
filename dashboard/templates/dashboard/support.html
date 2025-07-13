@@ -1,0 +1,35 @@
+{% extends 'parents/basedashboard.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% include 'partials/header.html' %}
+
+    <main class="main-content">
+        <h1>سوالی دارید؟</h1>
+        <button class="submit-btn">سوال جدید</button>
+        <div class="ticket-list" id="ticketList"></div>
+    </main>
+
+    <div class="modal" id="ticketModal">
+        <div class="modal-content">
+            <button class="close-btn">X</button>
+            <div id="view-ticket" style="display: none;">
+                <h2 id="modal-title"></h2>
+                <p id="modal-question"></p>
+                <p id="modal-submission-date"></p>
+                <p id="modal-response"></p>
+            </div>
+            <div id="new-ticket" style="display: none;">
+                <h2>سوال جدید</h2>
+                <div class="submission-form">
+                    <label for="ticket-title">عنوان سوال:</label>
+                    <input type="text" id="ticket-title" placeholder="مثال: مشکل نصب Django-DRF" />
+                    <label for="ticket-question">متن سوال:</label>
+                    <textarea id="ticket-question" placeholder="لطفاً سوال خود را اینجا بنویسید..." rows="5"></textarea>
+                    <button class="submit-btn">ارسال</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

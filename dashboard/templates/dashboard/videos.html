@@ -1,0 +1,19 @@
+{% extends 'parents/basedashboard.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% include 'partials/header.html' %}
+    <main class="main-content">
+        <h1>ویدیوهای دوره</h1>
+        <div class="video-grid">
+            <div class="video-item">
+                <h3>ویدیو ۱</h3>
+                <video width="100%" height="200" controls>
+                    <source src="{% static 'videos/video.mp4' %}" type="video/mp4">
+                    مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                </video>
+                <a href="{% static 'videos/video.mp4' %}" download class="download-btn">دانلود ویدیو</a>
+            </div>
+        </div>
+    </main>
+{% endblock %}

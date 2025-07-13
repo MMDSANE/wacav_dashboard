@@ -1,0 +1,22 @@
+{% load static %}
+<aside class="sidebar">
+    <div class="logo">wacav.ir</div>
+    <a href="{% url 'dashboard:student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+        <span class="icon">🏠</span>داشبورد
+    </a>
+    <a href="{% url 'dashboard:videos_dashboard' %}" class="{% if request.resolver_match.url_name == 'videos_dashboard' %}active{% endif %}">
+        <span class="icon">📹</span>ویدیو دوره
+    </a>
+    <a href="{% url 'dashboard:resources_dashboard' %}" class="{% if request.resolver_match.url_name == 'resources_dashboard' %}active{% endif %}">
+        <span class="icon">📚</span>منابع
+    </a>
+    <a href="{% url 'dashboard:assignments_dashboard' %}" class="{% if request.resolver_match.url_name == 'assignments_dashboard' %}active{% endif %}">
+        <span class="icon">📋</span>تکالیف
+    </a>
+    <a href="{% url 'dashboard:support_dashboard' %}" class="{% if request.resolver_match.url_name == 'support_dashboard' %}active{% endif %}">
+        <span class="icon">❓</span>سوالی دارید؟
+    </a>
+    <a href="{% url 'dashboard:notifications_dashboard' %}" class="{% if request.resolver_match.url_name == 'notifications_dashboard' %}active{% endif %}">
+        <span class="icon">🔔</span>نوتیفیکیشن‌ها
+    </a>
+</aside>

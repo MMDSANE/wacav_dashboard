@@ -1,0 +1,14 @@
+{% extends 'parents/basedashboard.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+    {% include 'partials/header.html' %}
+
+    <main class="main-content">
+      <h1>نوتیفیکیشن‌ها</h1>
+      <button class="submit-btn">سین کردن همه</button>
+      <div class="notification-list" id="notificationList"></div>
+    </main>
+
+{% endblock %}

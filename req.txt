@@ -1,0 +1,13 @@
+asgiref==3.8.1
+Django==5.2
+django-jalali==7.4.0
+django-resized==1.0.3
+jalali_core==1.0.0
+jdatetime==5.2.0
+Markdown==3.8
+pillow==11.2.1
+psycopg==3.2.7
+psycopg-binary==3.2.9
+psycopg2-binary==2.9.10
+setuptools==80.3.0
+sqlparse==0.5.3

@@ -1,0 +1,404 @@
+{% extends 'parents/basedashboard.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}تکالیف شما{% endblock %}
+
+{% block content %}
+    <style>
+        {#body {#}
+        {#    background: linear-gradient(135deg, #e6f0fa 0%, #d4f4e8 100%);#}
+        {#    min-height: 100vh;#}
+        {#    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;#}
+        {#}#}
+        {##}
+        {#.main-content {#}
+        {#    max-width: 7000px; /* افزایش عرض کلی صفحه */#}
+        {#    margin: 0 auto;#}
+        {#    padding: 4rem 3rem; /* افزایش padding برای فضای بهتر */#}
+        {#}#}
+        {##}
+        {#.main-content h1 {#}
+        {#    background: linear-gradient(90deg, #4a90e2, #50c4b7);#}
+        {#    -webkit-background-clip: text;#}
+        {#    -webkit-text-fill-color: transparent;#}
+        {#    background-clip: text;#}
+        {#    text-align: center;#}
+        {#    font-size: 3rem; /* بزرگ‌تر کردن عنوان */#}
+        {#    margin-bottom: 3rem;#}
+        {#    font-weight: 700;#}
+        {#}#}
+
+        .course-section {
+            margin-bottom: 4rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 3rem; /* افزایش padding برای فضای داخلی */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .course-title {
+            background: linear-gradient(90deg, #4a90e2, #50c4b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2rem; /* بزرگ‌تر کردن عنوان دوره */
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .assignment-list {
+            display: grid;
+            gap: 2rem; /* افزایش فاصله بین کارت‌ها */
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* کارت‌های پهن‌تر */
+        }
+
+        .assignment-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            border-radius: 15px;
+            padding: 2rem; /* افزایش padding داخلی کارت */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assignment-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4a90e2, #50c4b7);
+            border-radius: 15px 15px 0 0;
+        }
+
+        .assignment-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            border-color: #4a90e2;
+        }
+
+        .assignment-item h3 {
+            color: #2c3e50;
+            font-size: 1.6rem; /* بزرگ‌تر کردن عنوان تکلیف */
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .assignment-item p {
+            color: #666;
+            margin-bottom: 1.2rem;
+            line-height: 1.7;
+            font-size: 1.1rem; /* افزایش سایز متن توضیحات */
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #4a90e2, #50c4b7);
+            color: white;
+            padding: 0.7rem 1.5rem; /* افزایش padding دکمه */
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1rem; /* بزرگ‌تر کردن متن دکمه */
+            margin-bottom: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        .assignment-details {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(80, 196, 183, 0.05));
+            padding: 1.5rem; /* افزایش padding */
+            border-radius: 10px;
+            margin-top: 1.2rem;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.4rem 1rem; /* افزایش padding */
+            border-radius: 20px;
+            font-size: 0.95rem; /* افزایش سایز فونت */
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+        }
+
+        .status.pending {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #2d3436;
+        }
+
+        .status.submitted {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+        }
+
+        .status.graded {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .grade {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            color: white;
+            padding: 0.6rem 1.2rem; /* افزایش padding */
+            border-radius: 20px;
+            display: inline-block;
+            margin: 0.7rem 0;
+            font-weight: 600;
+            font-size: 1rem; /* افزایش سایز فونت */
+        }
+
+        .submission-status {
+            color: #e74c3c;
+            font-weight: 600;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 0.6rem 1.2rem; /* افزایش padding */
+            border-radius: 10px;
+            margin-bottom: 1.2rem;
+            font-size: 1rem; /* افزایش سایز فونت */
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #4a90e2, #50c4b7);
+            color: white;
+            border: none;
+            padding: 1rem 2rem; /* افزایش padding دکمه */
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem; /* بزرگ‌تر کردن متن دکمه */
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(45deg, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            padding: 3rem; /* افزایش padding */
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px; /* افزایش عرض مودال */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.8rem; /* بزرگ‌تر کردن دکمه بستن */
+            cursor: pointer;
+            color: #e74c3c;
+            padding: 0.7rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.1);
+        }
+
+        .modal-content h2 {
+            background: linear-gradient(90deg, #4a90e2, #50c4b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.2rem;
+            font-size: 1.8rem; /* بزرگ‌تر کردن عنوان مودال */
+        }
+
+        .submission-form {
+            margin-top: 2rem; /* افزایش فاصله فرم */
+        }
+
+        .submission-form label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem; /* افزایش سایز فونت */
+        }
+
+        .submission-form input[type="url"] {
+            width: 100%;
+            padding: 1rem; /* افزایش padding */
+            border: 2px solid rgba(74, 144, 226, 0.3);
+            border-radius: 10px;
+            font-size: 1.1rem; /* افزایش سایز فونت */
+            margin-bottom: 1.2rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .submission-form input[type="url"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .main-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .course-section {
+                padding: 2rem;
+            }
+
+            .assignment-item {
+                padding: 1.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 2rem;
+                max-width: 600px; /* تنظیم عرض مودال برای موبایل */
+            }
+        }
+    </style>
+
+    {% include 'partials/header.html' %}
+    <main class="main-content">
+        <h1>📚 تکالیف دوره‌های شما</h1>
+
+        {% for course in courses %}
+            <section class="course-section">
+                <h2 class="course-title">{{ course.title }}</h2>
+                <div class="assignment-list">
+                    {% for assignment in assignments_by_course|get_item:course.id %}
+                        <div class="assignment-item"
+                             data-assignment-id="{{ assignment.id }}"
+                             data-title="{{ assignment.title }}"
+                             data-description="{{ assignment.description }}"
+                             data-due-date="{{ assignment.due_date|default_if_none:'بدون مهلت' }}"
+                             data-submitted="{% if submissions_map|get_item:assignment.id %}true{% else %}false{% endif %}">
+                            <h3>{{ assignment.title }}</h3>
+                            <p>{{ assignment.description|truncatechars:100 }}</p>
+                            {% if assignment.file %}
+                                <a href="{{ assignment.file.url }}" download class="download-btn">📥 دانلود فایل</a>
+                            {% endif %}
+                            <section class="assignment-details">
+                                {% with submission=submissions_map|get_item:assignment.id %}
+                                    {% if submission %}
+                                        <span class="status {{ submission.get_status_display|lower }}">{{ submission.get_status_display }}</span>
+                                        {% if submission.github_link %}
+                                            <p>✅ لینک ارسال‌شده: <a href="{{ submission.github_link }}" target="_blank">{{ submission.github_link }}</a></p>
+                                        {% endif %}
+                                        {% if submission.grade %}
+                                            <p class="grade">🎓 نمره: {{ submission.grade }}</p>
+                                        {% endif %}
+                                        {% if submission.feedback %}
+                                            <p>📝 بازخورد مدرس: {{ submission.feedback }}</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="submission-status">🚫 هنوز پاسخی ارسال نشده است</p>
+                                    {% endif %}
+                                {% endwith %}
+                                <button class="open-modal-btn submit-btn" {% if submission %}disabled{% endif %}>✏️ ارسال پاسخ تکلیف</button>
+                            </section>
+                        </div>
+                    {% empty %}
+                        <p>هیچ تکلیفی برای این دوره ثبت نشده است.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        {% empty %}
+            <p>شما هنوز در هیچ دوره‌ای ثبت‌نام نکرده‌اید.</p>
+            <br><br><br>
+        {% endfor %}
+    <br><br><br><br><br><br><br><br><br>
+    </main>
+
+    <div class="modal" id="assignmentModal">
+        <div class="modal-content">
+            <button class="close-btn">✖</button>
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+            <p id="modal-due-date"></p>
+            <form method="post" class="submission-form">
+                {% csrf_token %}
+                <input type="hidden" name="assignment_id" id="modal-assignment-id">
+                <label for="github-link">لینک گیت‌هاب پاسخ:</label>
+                <input type="url" name="github_link" id="github-link" placeholder="https://github.com/..." required>
+                <button type="submit" class="submit-btn">💾 ارسال</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('assignmentModal');
+            const closeModalBtn = modal.querySelector('.close-btn');
+            const openModalBtns = document.querySelectorAll('.open-modal-btn');
+
+            openModalBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.assignment-item');
+                    const isSubmitted = card.dataset.submitted === 'true';
+                    if (!isSubmitted && !btn.disabled) {
+                        modal.querySelector('#modal-title').textContent = card.dataset.title;
+                        modal.querySelector('#modal-description').textContent = card.dataset.description;
+                        modal.querySelector('#modal-due-date').textContent = `مهلت: ${card.dataset.dueDate}`;
+                        modal.querySelector('#modal-assignment-id').value = card.dataset.assignmentId;
+                        modal.style.display = 'block';
+                    }
+                });
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}

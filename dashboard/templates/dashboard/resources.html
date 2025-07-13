@@ -1,0 +1,10 @@
+{% extends 'parents/basedashboard.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% include 'partials/header.html' %}
+    <main class="main-content">
+        <h1>منابع دوره</h1>
+        <div class="resource-list" id="resourceList"></div>
+    </main>
+{% endblock %}
