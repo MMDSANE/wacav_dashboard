@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-tli!1i7r%09$!q95foq7%!ad+xylgz&ucujao#i)lnl4bh5xr0
 DEBUG = False
 ###########################################
 
-ALLOWED_HOSTS = ['services.irn9.chabokan.net', 'panel.wacav.ir', 'www.panel.wacav.ir', '127.0.0.1']
+ALLOWED_HOSTS = ['wacav-dashboard.chbk.app', 'panel.wacav.ir', 'www.panel.wacav.ir', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
     'http://wacav-dashboard.chbk.app',
