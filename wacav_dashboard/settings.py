@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ########################################
 # با python-decouple برای امنیت اطلاعات
-SECRET_KEY = 'django-insecure-tli!1i7r%09$!q95foq7%!ad+xylgz&ucujao#i)lnl4bh5xr0'
+SECRET_KEY = "django-insecure-tli!1i7r%09$!q95foq7%!ad+xylgz&ucujao#i)lnl4bh5xr0"
 DEBUG = False
 ###########################################
 
