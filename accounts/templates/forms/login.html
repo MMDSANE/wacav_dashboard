@@ -1,8 +1,9 @@
 {#{% extends 'parents/base.html' %}#}
 {% load static %}
 {#{% block title %}ورود به سیستم{% endblock %}#}
+{% block head %}
+    <title>ورود به سیستم</title>
 
-{% block extra_css %}
 <style>
     * {
         margin: 0;
@@ -388,7 +389,6 @@
     }
 </style>
 {% endblock %}
-{#{% block title %}ورود به سیستم{% endblock %}#}
 
 {% block content %}
 <body>

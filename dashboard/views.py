@@ -61,7 +61,7 @@ def update_notifications_for_user(user):
     # تکالیف جدید
     assignments = Assignment.objects.filter(course__in=user_courses)
     for assignment in assignments:
-        message = f"تکلیف جدید اضافه شد: {assignment.title}"
+        message = f"تکلیف یا آزمون جدید اضافه شد: {assignment.title}"
         if not Notification.objects.filter(course=assignment.course, message=message).exists():
             Notification.objects.create(course=assignment.course, message=message)
 
@@ -244,7 +244,7 @@ def assignments_dashboard(request):
 
         # بررسی و ایجاد نوتیفیکیشن برای تکالیف جدید
         for assignment in assignments:
-            message = f"تکلیف جدید اضافه شد: {assignment.title}"
+            message = f"تکلیف یا آزمون جدید اضافه شد: {assignment.title}"
             exists = Notification.objects.filter(course=course, message=message).exists()
             if not exists:
                 Notification.objects.create(course=course, message=message)

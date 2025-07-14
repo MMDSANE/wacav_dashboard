@@ -1,6 +1,6 @@
 {% load static %}
 <aside class="sidebar">
-    <div class="logo">wacav.ir</div>
+    <div class="logo">WACAV</div>
     <a href="{% url 'dashboard:student_dashboard' %}" class="{% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
         <span class="icon">🏠</span>داشبورد
     </a>
@@ -11,7 +11,7 @@
         <span class="icon">📚</span>منابع
     </a>
     <a href="{% url 'dashboard:assignments_dashboard' %}" class="{% if request.resolver_match.url_name == 'assignments_dashboard' %}active{% endif %}">
-        <span class="icon">📋</span>تکالیف
+        <span class="icon">📋</span>تکالیف و آزمون‌ها
     </a>
     <a href="{% url 'dashboard:support_dashboard' %}" class="{% if request.resolver_match.url_name == 'support_dashboard' %}active{% endif %}">
         <span class="icon">❓</span>سوالی دارید؟

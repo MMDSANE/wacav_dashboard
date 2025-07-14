@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls'), name='accounts'),
+    path('lgadmin/', admin.site.urls),
+    path('', include('accounts.urls'), name='accounts'),
     path('dashboard/', include('dashboard.urls'), name='dashboard'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

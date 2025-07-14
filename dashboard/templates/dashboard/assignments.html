@@ -3,7 +3,7 @@
 {% load custom_filters %}
 {% load jformat %}
 
-{% block title %}تکالیف شما{% endblock %}
+{% block title %}تکالیف و آزمون‌های شما{% endblock %}
 
 {% block content %}
     <style>
@@ -629,7 +629,7 @@
 
     {% include 'partials/header.html' %}
     <main class="main-content">
-        <h1 align="center" class="course-title-h1">📚 تکالیف دوره‌های شما</h1>
+        <h1 align="center" class="course-title-h1">📚 تکالیف و آزمون‌های دوره‌های شما</h1>
 
         {% for course in courses %}
             <section class="course-section">
