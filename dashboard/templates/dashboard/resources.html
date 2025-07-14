@@ -1,10 +1,303 @@
 {% extends 'parents/basedashboard.html' %}
 {% load static %}
-{% block title %}Home{% endblock %}
+{% block title %}منابع دوره‌ها{% endblock %}
+
 {% block content %}
     {% include 'partials/header.html' %}
     <main class="main-content">
-        <h1>منابع دوره</h1>
-        <div class="resource-list" id="resourceList"></div>
+        <div class="page-header">
+            <h1 class="page-title">منابع دوره</h1>
+            <p class="page-subtitle">دسترسی به تمام منابع و مطالب تکمیلی دوره‌های شما</p>
+        </div>
+
+        <div class="resources-container">
+            {% for section in sections %}
+                <div class="resource-card">
+                    <div class="card-header">
+                        <div class="session-info">
+                            <span class="session-badge">جلسه {{ section.session }}</span>
+                            <h3 class="chapter-title">{{ section.chapter }}</h3>
+                        </div>
+                        <div class="course-tag">{{ section.course.title }}</div>
+                    </div>
+
+                    <div class="card-body">
+                        {% if section.links.all %}
+                            <div class="links-grid">
+                                {% for link in section.links.all %}
+                                    <div class="link-item">
+                                        <a href="{{ link.url }}" target="_blank" class="resource-link">
+                                            <div class="link-icon">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                                </svg>
+                                            </div>
+                                            <div class="link-content">
+                                                <span class="link-title">{{ link.title }}</span>
+                                                <span class="link-url">{{ link.url|truncatechars:40 }}</span>
+                                            </div>
+                                            <div class="external-icon">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                    <polyline points="15,3 21,3 21,9"/>
+                                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                                </svg>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10,9 9,9 8,9"/>
+                                    </svg>
+                                </div>
+                                <p class="empty-text">هنوز منبعی برای این بخش اضافه نشده است</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-resources">
+                    <div class="no-resources-icon">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="no-resources-title">هیچ منبعی یافت نشد</h3>
+                    <p class="no-resources-text">در حال حاضر هیچ منبعی برای نمایش وجود ندارد. منابع جدید به زودی اضافه خواهند شد.</p>
+                </div>
+            {% endfor %}
+        </div>
     </main>
+
+    <style>
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .resources-container {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .resource-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .session-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .chapter-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: white;
+        }
+
+        .course-tag {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .links-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .link-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+
+        .link-item:hover {
+            border-color: #3b82f6;
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: background-color 0.2s ease;
+        }
+
+        .resource-link:hover {
+            background-color: #f8fafc;
+        }
+
+        .link-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-left: 1rem;
+        }
+
+        .link-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-title {
+            display: block;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.25rem;
+        }
+
+        .link-url {
+            display: block;
+            font-size: 0.875rem;
+            color: #64748b;
+            word-break: break-all;
+        }
+
+        .external-icon {
+            flex-shrink: 0;
+            color: #64748b;
+            margin-right: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .no-resources {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .no-resources-icon {
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .no-resources-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-resources-text {
+            font-size: 1rem;
+            margin: 0;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .session-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .course-tag {
+                align-self: stretch;
+                text-align: center;
+            }
+
+            .link-icon {
+                margin-left: 0.75rem;
+            }
+        }
+    </style>
 {% endblock %}

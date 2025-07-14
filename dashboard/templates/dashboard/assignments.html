@@ -1,68 +1,74 @@
 {% extends 'parents/basedashboard.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load jformat %}
 
 {% block title %}تکالیف شما{% endblock %}
 
 {% block content %}
     <style>
-        {#body {#}
-        {#    background: linear-gradient(135deg, #e6f0fa 0%, #d4f4e8 100%);#}
-        {#    min-height: 100vh;#}
-        {#    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;#}
-        {#}#}
-        {##}
-        {#.main-content {#}
-        {#    max-width: 7000px; /* افزایش عرض کلی صفحه */#}
-        {#    margin: 0 auto;#}
-        {#    padding: 4rem 3rem; /* افزایش padding برای فضای بهتر */#}
-        {#}#}
-        {##}
-        {#.main-content h1 {#}
-        {#    background: linear-gradient(90deg, #4a90e2, #50c4b7);#}
-        {#    -webkit-background-clip: text;#}
-        {#    -webkit-text-fill-color: transparent;#}
-        {#    background-clip: text;#}
-        {#    text-align: center;#}
-        {#    font-size: 3rem; /* بزرگ‌تر کردن عنوان */#}
-        {#    margin-bottom: 3rem;#}
-        {#    font-weight: 700;#}
-        {#}#}
-
         .course-section {
             margin-bottom: 4rem;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 3rem; /* افزایش padding برای فضای داخلی */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.02), rgba(80, 196, 183, 0.02));
+            pointer-events: none;
         }
 
         .course-title {
-            background: linear-gradient(90deg, #4a90e2, #50c4b7);
+            background: linear-gradient(135deg, #4a90e2, #50c4b7, #667eea);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-size: 2.2rem; /* بزرگ‌تر کردن عنوان دوره */
-            margin-bottom: 2rem;
+            font-size: 2.4rem;
+            margin-bottom: 2.5rem;
             text-align: center;
             font-weight: 700;
+            position: relative;
+            z-index: 1;
         }
+
+        .course-title-h1{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            align-content: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
 
         .assignment-list {
             display: grid;
-            gap: 2rem; /* افزایش فاصله بین کارت‌ها */
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* کارت‌های پهن‌تر */
+            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
         }
 
         .assignment-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
-            border-radius: 15px;
-            padding: 2rem; /* افزایش padding داخلی کارت */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(74, 144, 226, 0.2);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
         }
@@ -73,63 +79,93 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #4a90e2, #50c4b7);
-            border-radius: 15px 15px 0 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4a90e2, #50c4b7, #667eea);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .assignment-item::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .assignment-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
             border-color: #4a90e2;
+        }
+
+        .assignment-item:hover::after {
+            opacity: 1;
         }
 
         .assignment-item h3 {
             color: #2c3e50;
-            font-size: 1.6rem; /* بزرگ‌تر کردن عنوان تکلیف */
-            margin-bottom: 1rem;
+            font-size: 1.7rem;
+            margin-bottom: 1.2rem;
             font-weight: 600;
+            position: relative;
+            z-index: 1;
         }
 
         .assignment-item p {
-            color: #666;
-            margin-bottom: 1.2rem;
-            line-height: 1.7;
-            font-size: 1.1rem; /* افزایش سایز متن توضیحات */
+            color: #5a6c7d;
+            margin-bottom: 1.3rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .download-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             background: linear-gradient(45deg, #4a90e2, #50c4b7);
             color: white;
-            padding: 0.7rem 1.5rem; /* افزایش padding دکمه */
+            padding: 0.8rem 1.8rem;
             text-decoration: none;
-            border-radius: 25px;
-            font-size: 1rem; /* بزرگ‌تر کردن متن دکمه */
-            margin-bottom: 1.2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+            position: relative;
+            z-index: 1;
         }
 
         .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.35);
         }
 
         .assignment-details {
-            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(80, 196, 183, 0.05));
-            padding: 1.5rem; /* افزایش padding */
-            border-radius: 10px;
-            margin-top: 1.2rem;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.04), rgba(80, 196, 183, 0.04));
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(74, 144, 226, 0.08);
+            position: relative;
+            z-index: 1;
         }
 
         .status {
-            display: inline-block;
-            padding: 0.4rem 1rem; /* افزایش padding */
-            border-radius: 20px;
-            font-size: 0.95rem; /* افزایش سایز فونت */
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
             font-weight: 600;
-            margin-bottom: 0.7rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .status.pending {
@@ -150,40 +186,50 @@
         .grade {
             background: linear-gradient(45deg, #fd79a8, #e84393);
             color: white;
-            padding: 0.6rem 1.2rem; /* افزایش padding */
-            border-radius: 20px;
-            display: inline-block;
-            margin: 0.7rem 0;
+            padding: 0.7rem 1.4rem;
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
             font-weight: 600;
-            font-size: 1rem; /* افزایش سایز فونت */
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(253, 121, 168, 0.3);
         }
 
         .submission-status {
             color: #e74c3c;
             font-weight: 600;
-            background: rgba(231, 76, 60, 0.1);
-            padding: 0.6rem 1.2rem; /* افزایش padding */
-            border-radius: 10px;
-            margin-bottom: 1.2rem;
-            font-size: 1rem; /* افزایش سایز فونت */
+            background: rgba(231, 76, 60, 0.08);
+            padding: 0.8rem 1.4rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .submit-btn {
             background: linear-gradient(45deg, #4a90e2, #50c4b7);
             color: white;
             border: none;
-            padding: 1rem 2rem; /* افزایش padding دکمه */
-            border-radius: 25px;
+            padding: 1.2rem 2.5rem;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 1.1rem; /* بزرگ‌تر کردن متن دکمه */
+            font-size: 1.1rem;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.35);
         }
 
         .submit-btn:disabled {
@@ -200,9 +246,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
@@ -210,73 +257,336 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
-            padding: 3rem; /* افزایش padding */
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
+            padding: 0;
+            border-radius: 25px;
             width: 90%;
-            max-width: 700px; /* افزایش عرض مودال */
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 650px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            overflow: hidden;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, -20px) rotate(180deg); }
+        }
+
+        .modal-header-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .modal-header h2 {
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
         }
 
         .close-btn {
             position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
+            top: 20px;
+            left: 25px;
+            background: rgba(255, 255, 255, 0.2);
             border: none;
-            font-size: 1.8rem; /* بزرگ‌تر کردن دکمه بستن */
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #e74c3c;
-            padding: 0.7rem;
+            color: white;
+            padding: 0.8rem;
             border-radius: 50%;
             transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(10px);
         }
 
         .close-btn:hover {
-            background: rgba(231, 76, 60, 0.1);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(90deg);
         }
 
-        .modal-content h2 {
-            background: linear-gradient(90deg, #4a90e2, #50c4b7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1.2rem;
-            font-size: 1.8rem; /* بزرگ‌تر کردن عنوان مودال */
+        .modal-body {
+            padding: 2.5rem;
+            background: white;
+        }
+
+        .assignment-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assignment-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .assignment-info h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .assignment-info p {
+            color: #5a6c7d;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .due-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #ff7675, #e84393);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.3);
         }
 
         .submission-form {
-            margin-top: 2rem; /* افزایش فاصله فرم */
+            background: #f8f9fa;
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submission-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4a90e2, #50c4b7);
+        }
+
+        .form-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .form-title::before {
+            content: '🚀';
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
         }
 
         .submission-form label {
             display: block;
-            margin-bottom: 0.7rem;
-            font-weight: 600;
+            font-size: 1.1rem;
             color: #2c3e50;
-            font-size: 1.1rem; /* افزایش سایز فونت */
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .submission-form input[type="url"] {
             width: 100%;
-            padding: 1rem; /* افزایش padding */
-            border: 2px solid rgba(74, 144, 226, 0.3);
-            border-radius: 10px;
-            font-size: 1.1rem; /* افزایش سایز فونت */
-            margin-bottom: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 1rem;
+            color: #2c3e50;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .submission-form input[type="url"]:focus {
             outline: none;
             border-color: #4a90e2;
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            transform: translateY(-2px);
         }
 
+        .input-helper {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .input-helper::before {
+            content: '💡';
+        }
+
+        .submit-btn-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #4a90e2, #50c4b7);
+            color: white;
+            border: none;
+            padding: 1.3rem 3rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(74, 144, 226, 0.4);
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(45deg, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submission-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* انیمیشن loading برای دکمه‌ها */
+        .submit-btn.loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* بهبود responsive */
         @media (max-width: 768px) {
             .main-content {
                 padding: 1.5rem;
@@ -291,20 +601,35 @@
             }
 
             .assignment-item {
-                padding: 1.5rem;
+                padding: 2rem;
+            }
+
+            .assignment-list {
+                grid-template-columns: 1fr;
             }
 
             .modal-content {
                 width: 95%;
+                max-width: 500px;
+            }
+
+            .modal-header {
                 padding: 2rem;
-                max-width: 600px; /* تنظیم عرض مودال برای موبایل */
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .submission-form {
+                padding: 1.5rem;
             }
         }
     </style>
 
     {% include 'partials/header.html' %}
     <main class="main-content">
-        <h1>📚 تکالیف دوره‌های شما</h1>
+        <h1 align="center" class="course-title-h1">📚 تکالیف دوره‌های شما</h1>
 
         {% for course in courses %}
             <section class="course-section">
@@ -315,31 +640,49 @@
                              data-assignment-id="{{ assignment.id }}"
                              data-title="{{ assignment.title }}"
                              data-description="{{ assignment.description }}"
-                             data-due-date="{{ assignment.due_date|default_if_none:'بدون مهلت' }}"
+                             data-due-date="{{ assignment.due_date|jformat:"%d / %m / %Y"|default_if_none:'بدون مهلت' }}"
                              data-submitted="{% if submissions_map|get_item:assignment.id %}true{% else %}false{% endif %}">
                             <h3>{{ assignment.title }}</h3>
                             <p>{{ assignment.description|truncatechars:100 }}</p>
+                            <p>⏰ زمان ارسال تا تاریخ {{ assignment.due_date|jformat:"%d / %m / %Y ساعت %H:%m" }} درنظر گرفته شده</p>
                             {% if assignment.file %}
-                                <a href="{{ assignment.file.url }}" download class="download-btn">📥 دانلود فایل</a>
+                                <a href="{% url 'dashboard:download_file' assignment.id %}" class="download-btn">
+                                    <span>📥</span> دانلود فایل
+                                </a>
                             {% endif %}
                             <section class="assignment-details">
                                 {% with submission=submissions_map|get_item:assignment.id %}
                                     {% if submission %}
-                                        <span class="status {{ submission.get_status_display|lower }}">{{ submission.get_status_display }}</span>
+                                        <span class="status {{ submission.get_status_display|lower }}">
+                                            {% if submission.get_status_display == 'pending' %}⏳{% elif submission.get_status_display == 'submitted' %}📤{% else %}✅{% endif %}
+                                            {{ submission.get_status_display }}
+                                        </span>
                                         {% if submission.github_link %}
                                             <p>✅ لینک ارسال‌شده: <a href="{{ submission.github_link }}" target="_blank">{{ submission.github_link }}</a></p>
                                         {% endif %}
                                         {% if submission.grade %}
-                                            <p class="grade">🎓 نمره: {{ submission.grade }}</p>
+                                            <p class="grade">
+                                                <span>🎓</span> نمره: {{ submission.grade }}
+                                            </p>
                                         {% endif %}
                                         {% if submission.feedback %}
                                             <p>📝 بازخورد مدرس: {{ submission.feedback }}</p>
                                         {% endif %}
                                     {% else %}
-                                        <p class="submission-status">🚫 هنوز پاسخی ارسال نشده است</p>
+                                        <p class="submission-status">
+                                            <span>🚫</span> هنوز پاسخی ارسال نشده است
+                                        </p>
                                     {% endif %}
                                 {% endwith %}
-                                <button class="open-modal-btn submit-btn" {% if submission %}disabled{% endif %}>✏️ ارسال پاسخ تکلیف</button>
+                                {% if assignment.due_date and assignment.due_date < now %}
+                                    <p class="submission-status">
+                                        <span>⏰</span> مهلت ارسال به پایان رسیده است
+                                    </p>
+                                {% else %}
+                                    <button class="open-modal-btn submit-btn" {% if submission %}disabled{% endif %}>
+                                        <span>✏️</span> ارسال پاسخ تکلیف
+                                    </button>
+                                {% endif %}
                             </section>
                         </div>
                     {% empty %}
@@ -356,17 +699,43 @@
 
     <div class="modal" id="assignmentModal">
         <div class="modal-content">
-            <button class="close-btn">✖</button>
-            <h2 id="modal-title"></h2>
-            <p id="modal-description"></p>
-            <p id="modal-due-date"></p>
-            <form method="post" class="submission-form">
-                {% csrf_token %}
-                <input type="hidden" name="assignment_id" id="modal-assignment-id">
-                <label for="github-link">لینک گیت‌هاب پاسخ:</label>
-                <input type="url" name="github_link" id="github-link" placeholder="https://github.com/..." required>
-                <button type="submit" class="submit-btn">💾 ارسال</button>
-            </form>
+            <div class="modal-header">
+                <button class="close-btn">✖</button>
+                <span class="modal-header-icon">📝</span>
+                <h2>ارسال پاسخ تکلیف</h2>
+                <p class="subtitle">پاسخ خود را از طریق لینک گیت‌هاب ارسال کنید</p>
+            </div>
+            <div class="modal-body">
+                <div class="assignment-info">
+                    <h3 id="modal-title">📋 عنوان تکلیف</h3>
+                    <p id="modal-description">توضیحات تکلیف</p>
+                    <div class="due-date" id="modal-due-date">
+                        <span>⏰</span>
+                        <span>مهلت ارسال</span>
+                    </div>
+                </div>
+                <div class="submission-form">
+                    <div class="form-title">آپلود پاسخ</div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="assignment_id" id="modal-assignment-id">
+                        <div class="form-group">
+                            <label for="github-link">
+                                <span>🔗</span>
+                                لینک گیت‌هاب پروژه
+                            </label>
+                            <input type="url" name="github_link" id="github-link" placeholder="https://github.com/username/repository" required>
+                            <div class="input-helper">لینک مخزن گیت‌هاب خود را وارد کنید</div>
+                        </div>
+                        <div class="submit-btn-container">
+                            <button type="submit" class="submit-btn">
+                                <span>🚀</span>
+                                <span>ارسال پاسخ</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -375,15 +744,17 @@
             const modal = document.getElementById('assignmentModal');
             const closeModalBtn = modal.querySelector('.close-btn');
             const openModalBtns = document.querySelectorAll('.open-modal-btn');
+            const submitBtn = modal.querySelector('.submit-btn');
+            const form = modal.querySelector('.submission-form form');
 
             openModalBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const card = btn.closest('.assignment-item');
                     const isSubmitted = card.dataset.submitted === 'true';
                     if (!isSubmitted && !btn.disabled) {
-                        modal.querySelector('#modal-title').textContent = card.dataset.title;
+                        modal.querySelector('#modal-title').textContent = `📋 ${card.dataset.title}`;
                         modal.querySelector('#modal-description').textContent = card.dataset.description;
-                        modal.querySelector('#modal-due-date').textContent = `مهلت: ${card.dataset.dueDate}`;
+                        modal.querySelector('#modal-due-date').innerHTML = `<span>⏰</span><span>مهلت: ${card.dataset.dueDate}</span>`;
                         modal.querySelector('#modal-assignment-id').value = card.dataset.assignmentId;
                         modal.style.display = 'block';
                     }
@@ -398,6 +769,12 @@
                 if (e.target === modal) {
                     modal.style.display = 'none';
                 }
+            });
+
+            // اضافه کردن انیمیشن loading به دکمه ارسال
+            form.addEventListener('submit', () => {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
             });
         });
     </script>

@@ -11,6 +11,12 @@ admin.site.index_title = 'پنل ادمین اپلیکیشن'
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
+    class Media:
+        css = {
+            'all': ('css/custom_admin.css',)
+        }
+        js = ('js/custom_admin.js',)
+
     list_display = ('title', 'colored_status', 'student_count', 'progress_display')
     search_fields = ('title',)
     ordering = ('title',)
@@ -59,6 +65,10 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Assignment)
 class AssignmentAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('title', 'course', 'created_at', 'due_date')
     list_filter = ('course', 'created_at', 'due_date')
     search_fields = ('title', 'course__title')
@@ -90,6 +100,10 @@ class AssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(AssignmentSubmission)
 class AssignmentSubmissionAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('assignment', 'student', 'submitted_at', 'grade_display')
     list_filter = ('assignment', 'submitted_at', 'grade')
     search_fields = ('assignment__title', 'student__username', 'student__student_id')
@@ -111,6 +125,10 @@ class AssignmentSubmissionAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('subject', 'student', 'colored_status', 'created_at', 'updated_at')
     list_filter = ('status', 'created_at')
     search_fields = ('subject', 'message', 'student__username', 'student__first_name', 'student__last_name')
@@ -140,6 +158,10 @@ class TicketAdmin(admin.ModelAdmin):
 
 @admin.register(RoadmapStep)
 class RoadmapStepAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('title', 'course', 'status', 'order', 'created_at')
     list_filter = ('course', 'status', 'created_at')
     search_fields = ('title', 'description', 'course__title')
@@ -170,6 +192,10 @@ class RoadmapStepAdmin(admin.ModelAdmin):
 
 @admin.register(VideoItem)
 class VideoItemAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('title', 'course', 'duration', 'order', 'created_at')
     list_filter = ('course', 'created_at')
     search_fields = ('title', 'description', 'course__title')
@@ -200,6 +226,10 @@ class VideoItemAdmin(admin.ModelAdmin):
 
 @admin.register(ResourceSection)
 class ResourceSectionAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('session', 'chapter', 'course', 'order')
     list_filter = ('course',)
     search_fields = ('session', 'chapter', 'course__title')
@@ -208,6 +238,9 @@ class ResourceSectionAdmin(admin.ModelAdmin):
 
 @admin.register(ResourceLink)
 class ResourceLinkAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
     list_display = ('title', 'course_title')
     search_fields = ('title', 'url',)
 
@@ -217,6 +250,9 @@ class ResourceLinkAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
     list_display = ('course', 'message', 'created_at', 'is_read')
     list_filter = ('is_read', 'created_at', 'course')
     search_fields = ('message', 'course__title')
@@ -231,6 +267,10 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(CourseStudent)
 class CourseStudentAdmin(admin.ModelAdmin):
+    class Media:
+        css = {'all': ('css/custom_admin.css',)}
+        js = ('js/custom_admin.js',)
+
     list_display = ('student', 'course', 'score_display', 'registered_at')
     list_filter = ('course', 'registered_at')
     search_fields = (

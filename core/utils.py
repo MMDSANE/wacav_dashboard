@@ -14,6 +14,8 @@ import traceback  # برای گرفتن stack trace خطاها
 import inspect  # برای گرفتن اطلاعات ماژول و کلاس
 from django.utils.timezone import now  # برای گرفتن زمان با تنظیمات Django
 from core.models import LogEntry  # مدل LogEntry برای ذخیره لاگ در دیتابیس
+# core/utils.py
+from dashboard.models import Notification
 
 
 
@@ -675,3 +677,8 @@ def error_log(level=logging.ERROR, message="An event occurred", exception=None, 
         )
     except Exception as db_error:  # در صورت خطای دیتابیس
         logger.error(f"DB log failed: {db_error}")  # لاگ خطای دیتابیس
+
+
+
+def create_course_notification(course, message):
+    Notification.objects.create(course=course, message=message)

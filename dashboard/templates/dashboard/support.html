@@ -1,35 +1,500 @@
 {% extends 'parents/basedashboard.html' %}
 {% load static %}
-{% block title %}Home{% endblock %}
+{% load jformat %}
+
+{% block title %}پشتیبانی{% endblock %}
+
 {% block content %}
-    {% include 'partials/header.html' %}
+{% include 'partials/header.html' %}
 
     <main class="main-content">
-        <h1>سوالی دارید؟</h1>
-        <button class="submit-btn">سوال جدید</button>
-        <div class="ticket-list" id="ticketList"></div>
+        <div class="page-header">
+            <h1>پشتیبانی</h1>
+            <p class="subtitle">سوالات و مشکلات خود را با ما در میان بگذارید</p>
+        </div>
+
+        <button class="submit-btn" onclick="openNewTicketModal()">ارسال تیکت جدید</button>
+    <br><br>
+    <br><br>
+
+
+        <div class="ticket-list" id="ticketList">
+            {% if tickets %}
+                {% for ticket in tickets %}
+                    <div class="ticket-item" onclick="openViewTicketModal('{{ ticket.id }}', '{{ ticket.subject|escapejs }}', '{{ ticket.message|escapejs }}', '{{ ticket.created_at|jformat:"%Y / %m" }}', '{{ ticket.status }}')">
+                        <h3>{{ ticket.subject }}</h3>
+                        <p>{{ ticket.message|truncatewords:20 }}</p>
+                        <div class="ticket-meta">
+                            <span>تاریخ: {{ ticket.created_at|jformat:"%d / %m / %Y | %H:%m" }}</span>
+                            <span class="status status-{{ ticket.status|lower }}">{{ ticket.get_status_display }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-tickets">
+                    <div class="no-tickets-icon">📩</div>
+                    <h2>تیکتی ثبت نشده است</h2>
+                    <p>برای دریافت پشتیبانی، تیکت جدیدی ثبت کنید.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="pagination-container">
+            {% if tickets.has_previous %}
+                <a href="?page={{ tickets.previous_page_number }}" class="pagination-btn prev">قبلی</a>
+            {% endif %}
+            <span class="pagination-info">صفحه {{ tickets.number }} از {{ tickets.paginator.num_pages }}</span>
+            {% if tickets.has_next %}
+                <a href="?page={{ tickets.next_page_number }}" class="pagination-btn next">بعدی</a>
+            {% endif %}
+        </div>
     </main>
 
     <div class="modal" id="ticketModal">
         <div class="modal-content">
-            <button class="close-btn">X</button>
+            <button class="close-btn" onclick="closeModal()">✖</button>
             <div id="view-ticket" style="display: none;">
                 <h2 id="modal-title"></h2>
-                <p id="modal-question"></p>
-                <p id="modal-submission-date"></p>
-                <p id="modal-response"></p>
+                <p id="modal-message"></p>
+                <div class="modal-meta">
+                    <p id="modal-submission-date"></p>
+                    <p id="modal-status"></p>
+                </div>
             </div>
             <div id="new-ticket" style="display: none;">
-                <h2>سوال جدید</h2>
+                <h2>تیکت جدید</h2>
                 <div class="submission-form">
-                    <label for="ticket-title">عنوان سوال:</label>
-                    <input type="text" id="ticket-title" placeholder="مثال: مشکل نصب Django-DRF" />
-                    <label for="ticket-question">متن سوال:</label>
-                    <textarea id="ticket-question" placeholder="لطفاً سوال خود را اینجا بنویسید..." rows="5"></textarea>
-                    <button class="submit-btn">ارسال</button>
+                    <form id="ticket-form" action="{% url 'dashboard:submit_ticket' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="ticket-subject">موضوع:</label>
+                            <input type="text" id="ticket-subject" name="subject" placeholder="مثال: مشکل نصب Django" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="ticket-message">پیام:</label>
+                            <textarea id="ticket-message" name="message" placeholder="توضیحات مشکل یا سوال خود را بنویسید..." rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">ارسال تیکت</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <style>
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .ticket-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            padding: 0 10px;
+        }
+
+        .ticket-item {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .ticket-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: #e2e8f0;
+        }
+
+        .ticket-item h3 {
+            font-size: 1.3rem;
+            color: #1f2937;
+            margin: 0 0 12px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .ticket-item p {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .ticket-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .status-ne {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .status-ip {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        .status-an {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+        .status-cl {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            color: #581c87;
+            border: 1px solid #8b5cf6;
+        }
+
+        .no-tickets {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            margin: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .no-tickets-icon {
+            font-size: 3.5rem;
+            color: #9ca3af;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .no-tickets h2 {
+            font-size: 1.6rem;
+            color: #374151;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .no-tickets p {
+            font-size: 1rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            animation: slideIn 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 1.1rem;
+            color: #6b7280;
+            cursor: pointer;
+            margin-left: 0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f1f5f9;
+            color: #374151;
+            transform: scale(1.1);
+        }
+
+        #view-ticket h2 {
+            font-size: 1.8rem;
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        #view-ticket p {
+            font-size: 1rem;
+            color: #6b7280;
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.95rem;
+            color: #9ca3af;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        #new-ticket h2 {
+            font-size: 1.8rem;
+            color: #1f2937;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .submission-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .submission-form label {
+            display: block;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .submission-form input,
+        .submission-form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #374151;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .submission-form input:focus,
+        .submission-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: #fff;
+        }
+
+        .submission-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .pagination-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .pagination-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .pagination-info {
+            font-size: 0.95rem;
+            color: #6b7280;
+            font-weight: 500;
+            padding: 0 12px;
+        }
+    </style>
+
+    <script>
+        function openNewTicketModal() {
+            const modal = document.getElementById('ticketModal');
+            const newTicket = document.getElementById('new-ticket');
+            const viewTicket = document.getElementById('view-ticket');
+            modal.style.display = 'flex';
+            newTicket.style.display = 'block';
+            viewTicket.style.display = 'none';
+            document.getElementById('ticket-form').reset();
+        }
+
+        function openViewTicketModal(id, subject, message, createdAt, status) {
+            const modal = document.getElementById('ticketModal');
+            const viewTicket = document.getElementById('view-ticket');
+            const newTicket = document.getElementById('new-ticket');
+            modal.style.display = 'flex';
+            viewTicket.style.display = 'block';
+            newTicket.style.display = 'none';
+            document.getElementById('modal-title').textContent = subject;
+            document.getElementById('modal-message').textContent = 'پیام: ' + message;
+            document.getElementById('modal-submission-date').textContent = 'تاریخ ارسال: ' + createdAt;
+            document.getElementById('modal-status').textContent = 'وضعیت: ' + (status === 'NE' ? 'جدید' : status === 'IP' ? 'در حال بررسی' : status === 'AN' ? 'پاسخ داده شده' : 'بسته شده');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('ticketModal');
+            const newTicket = document.getElementById('new-ticket');
+            const viewTicket = document.getElementById('view-ticket');
+            modal.style.display = 'none';
+            newTicket.style.display = 'none';
+            viewTicket.style.display = 'none';
+            document.getElementById('ticket-form').reset();
+        }
+
+        document.querySelector('.close-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeModal();
+        });
+
+        document.getElementById('ticketModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('ticketModal')) {
+                closeModal();
+            }
+        });
+
+        document.querySelector('.close-btn').addEventListener('click', closeModal);
+
+
+        document.getElementById('ticket-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                    window.location.reload();
+                } else {
+                    alert('خطا در ارسال تیکت: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('خطای ارسال: ' + error.message);
+            });
+        });
+    </script>
 {% endblock %}

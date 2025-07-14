@@ -1,39 +1,520 @@
-{% extends 'parents/base.html' %}
+{#{% extends 'parents/base.html' %}#}
 {% load static %}
-{% block title %} Login {% endblock %}
+{#{% block title %}ورود به سیستم{% endblock %}#}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* انیمیشن ذرات شناور */
+    .floating-particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    .session {
+        display: flex;
+        width: 90%;
+        max-width: 1200px;
+        height: 600px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+    }
+
+    .left {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+
+    .left:hover .bg-img {
+        transform: scale(1.05);
+        opacity: 0.4;
+    }
+
+    .brand-logo {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+    }
+
+    .brand-logo svg {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    }
+
+    .brand-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 2px;
+    }
+
+    .brand-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+
+    .log-in {
+        flex: 1;
+        padding: 60px 50px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+
+    .log-in::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .login-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .login-header .brand-name {
+        color: #667eea;
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 4px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-header p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .error-message {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        font-size: 14px;
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        animation: shake 0.5s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .error-message::before {
+        content: "⚠️";
+        font-size: 1.2rem;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    .floating-label {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .floating-label input {
+        width: 100%;
+        padding: 20px 20px 20px 50px;
+        border: 2px solid #e0e6ed;
+        border-radius: 15px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+        outline: none;
+        backdrop-filter: blur(5px);
+    }
+
+    .floating-label input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .floating-label label {
+        position: absolute;
+        left: 50px;
+        top: 20px;
+        color: #95a5a6;
+        font-size: 16px;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0 8px;
+        border-radius: 5px;
+    }
+
+    .floating-label input:focus + label,
+    .floating-label input:valid + label {
+        top: -10px;
+        left: 45px;
+        font-size: 14px;
+        color: #667eea;
+        font-weight: 600;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #95a5a6;
+        font-size: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .floating-label input:focus ~ .input-icon {
+        color: #667eea;
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .login-button {
+        width: 100%;
+        {#height: 30%;#}
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .login-button:active {
+        transform: translateY(-1px);
+    }
+
+    .login-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .login-button:hover::before {
+        left: 100%;
+    }
+
+    .home-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .home-link a {
+        color: #7f8c8d;
+        text-decoration: none;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 10px 20px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .home-link a:hover {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .home-link a::before {
+        content: "🏠";
+        margin-left: 8px;
+        font-size: 1.1rem;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #95a5a6;
+        font-size: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .password-toggle:hover {
+        color: #667eea;
+    }
+
+    /* موبایل */
+    @media (max-width: 768px) {
+        .session {
+            flex-direction: column;
+            width: 95%;
+            height: auto;
+            min-height: 90vh;
+        }
+
+        .left {
+            height: 200px;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+        }
+
+        .log-in {
+            padding: 40px 30px;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+        }
+
+        .login-header .brand-name {
+            font-size: 2.2rem;
+        }
+    }
+
+    /* افکت لودینگ */
+    .loading {
+        position: relative;
+        pointer-events: none;
+    }
+
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+</style>
+{% endblock %}
+{#{% block title %}ورود به سیستم{% endblock %}#}
 
 {% block content %}
-    <body>
-      <div class="session">
+<body>
+    <!-- ذرات شناور -->
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s; width: 4px; height: 4px;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s; width: 6px; height: 6px;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s; width: 8px; height: 8px;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s; width: 5px; height: 5px;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s; width: 7px; height: 7px;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s; width: 4px; height: 4px;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s; width: 6px; height: 6px;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s; width: 8px; height: 8px;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s; width: 5px; height: 5px;"></div>
+    </div>
+
+    <div class="session">
         <div class="left">
-          <img src="{% static 'images/banner.jpg' %}" alt="Background" class="bg-img">
-          <svg enable-background="new 0 0 300 302.5" version="1.1" viewBox="0 0 300 302.5" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-            <style type="text/css">
-              .st0 { fill: #fff; }
-            </style>
-            <path class="st0" d="..."></path>
-          </svg>
+            <img src="{% static 'images/banner.jpg' %}" alt="Background" class="bg-img">
+            <div class="brand-logo">
+                <svg enable-background="new 0 0 300 302.5" version="1.1" viewBox="0 0 300 302.5" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                    <style type="text/css">
+                        .st0 { fill: #fff; }
+                    </style>
+                    <path class="st0" d="M150 0L300 75v152.5L150 302.5L0 227.5V75L150 0z"/>
+                    <circle class="st0" cx="150" cy="151.25" r="50"/>
+                </svg>
+                <h1 class="brand-title">WACAV</h1>
+                <p class="brand-subtitle">پلتفرم آموزشی</p>
+            </div>
         </div>
-        <form method="post" class="log-in" autocomplete="off">
-          {% csrf_token %}
-          <h4><span>WACAV</span></h4>
-          <p>Welcome! To view your class status, log in to your account:</p>
 
-          {% if error %}
-            <div style="color: red; font-size: 14px; margin-bottom: 10px;">{{ error }}</div>
-          {% endif %}
+        <form method="post" class="log-in" autocomplete="off" id="loginForm">
+            {% csrf_token %}
 
-          <div class="floating-label">
-            <input placeholder="User" type="text" name="user" id="user" autocomplete="off">
-            <label for="user">User:</label>
-          </div>
-          <div class="floating-label">
-            <input placeholder="Password" type="password" name="password" id="password" autocomplete="off">
-            <label for="password">Password:</label>
-          </div>
-          <button type="submit">Log in</button>
-          <a href="https://wacav.ir" class="discrete" target="_blank">Return to Home Page</a>
+            <div class="login-header">
+                <h1 class="brand-name">WACAV</h1>
+                <p>خوش آمدید! برای مشاهده وضعیت کلاس‌های خود، وارد حساب کاربری‌تان شوید</p>
+            </div>
+
+            {% if error %}
+                <div class="error-message">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <div class="floating-label">
+                <input placeholder="نام کاربری" type="text" name="user" id="user" autocomplete="off" required>
+                <label for="user">نام کاربری:</label>
+                <div class="input-icon">👤</div>
+            </div>
+
+            <div class="floating-label">
+                <input placeholder="رمز عبور" type="password" name="password" id="password" autocomplete="off" required>
+                <label for="password">رمز عبور:</label>
+                <div class="input-icon">🔒</div>
+                <div class="password-toggle" onclick="togglePassword()">👁️</div>
+            </div>
+
+            <div align="center">
+                <button type="submit" class="login-button" id="loginBtn">
+                ورود به سیستم
+            </button>
+            </div>
+
+            <div class="home-link">
+                <a href="https://wacav.ir" target="_blank">
+                    بازگشت به صفحه اصلی
+                </a>
+            </div>
         </form>
-      </div>
-    </body>
+    </div>
+
+    <script>
+        // تغییر نوع input رمز عبور
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // افکت لودینگ برای فرم
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const submitButton = document.getElementById('loginBtn');
+            submitButton.classList.add('loading');
+            submitButton.textContent = 'در حال ورود...';
+        });
+
+        // انیمیشن ورود برای فرم
+        document.addEventListener('DOMContentLoaded', function() {
+            const session = document.querySelector('.session');
+            session.style.opacity = '0';
+            session.style.transform = 'translateY(30px)';
+
+            setTimeout(() => {
+                session.style.transition = 'all 0.8s ease';
+                session.style.opacity = '1';
+                session.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // ذرات شناور تصادفی
+        function createFloatingParticles() {
+            const container = document.querySelector('.floating-particles');
+            const particleCount = 15;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = Math.random() * 10 + 10 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // createFloatingParticles();
+    </script>
+</body>
 {% endblock %}
