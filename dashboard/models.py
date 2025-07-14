@@ -15,7 +15,7 @@ from ckeditor.fields import RichTextField
 
 class Course(models.Model):
     title = models.CharField(max_length=MAX_LENGTH_TITLE, verbose_name="عنوان کلاس")
-    description = RichTextField(null=True, blank=True, verbose_name="توضیحات کلاس")
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات کلاس")
     students = models.ManyToManyField(Student, related_name='courses', verbose_name="دانشجویان")
     slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, blank=True, verbose_name="اسلاگ")
     manual_progress = models.PositiveSmallIntegerField(
@@ -71,7 +71,7 @@ class Course(models.Model):
 class Assignment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments', verbose_name="کلاس مربوطه")
     title = models.CharField(max_length=MAX_LENGTH_TITLE, verbose_name="عنوان تکلیف")
-    description = RichTextField(blank=True, verbose_name="توضیحات تکلیف")
+    description = models.TextField(blank=True, verbose_name="توضیحات تکلیف")
     file = models.FileField(upload_to='assignments/', null=True, blank=True, verbose_name="فایل تکلیف")
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     due_date = jmodels.jDateTimeField(default=timezone.now, null=True, blank=True, verbose_name="مهلت ارسال")
@@ -132,7 +132,7 @@ class AssignmentSubmission(models.Model):
         blank=True,
         verbose_name="نمره"
     )
-    feedback = RichTextField(
+    feedback = models.TextField(
         blank=True,
         null=True,
         verbose_name="بازخورد"
@@ -156,7 +156,7 @@ class Ticket(models.Model):
         verbose_name='دانشجو'
     )
     subject = models.CharField(max_length=MAX_LENGTH_SUBJECT, verbose_name='موضوع')
-    message = RichTextField(verbose_name='پیام')
+    message = models.TextField(verbose_name='پیام')
 
 
     class Status(models.TextChoices):
@@ -194,7 +194,7 @@ class RoadmapStep(models.Model):
     course = models.ForeignKey(Course, related_name='roadmap_steps', on_delete=models.CASCADE, verbose_name='کلاس')
     title = models.CharField(max_length=MAX_LENGTH_TITLE, verbose_name='عنوان مرحله')
     description = models.CharField(max_length=MAX_LENGTH_DESCRIPTION, verbose_name='توضیح کوتاه')
-    details = RichTextField(blank=True, verbose_name='توضیحات کامل')
+    details = models.TextField(blank=True, verbose_name='توضیحات کامل')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     order = models.PositiveIntegerField(default=0, verbose_name='ترتیب نمایش')
     slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, blank=True, verbose_name='اسلاگ')
