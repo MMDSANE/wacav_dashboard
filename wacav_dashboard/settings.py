@@ -25,11 +25,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ########################################
 # با python-decouple برای امنیت اطلاعات
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY = 'django-insecure-tli!1i7r%09$!q95foq7%!ad+xylgz&ucujao#i)lnl4bh5xr0'
+DEBUG = False
 ###########################################
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['services.irn9.chabokan.net', 'panel.wacav.ir', 'www.panel.wacav.ir', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://wacav-dashboard.chbk.app',
+    'https://wacav-dashboard.chbk.app',
+    'http://panel.wacav.ir',
+    'https://panel.wacav.ir',
+    'http://127.0.0.1',
+
+]
+
 
 
 # Application definition
@@ -100,11 +110,12 @@ WSGI_APPLICATION = 'wacav_dashboard.wsgi.application'
 # نگران ارسال این اطلاعات در گیت‌هاب نباشید در گیت ایگنور میگردد و هر کس بصورت جداگانه فایل .env خود را در سیستم شخصی دارد
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'wacav990_linda',
+        'USER': 'wacav990_linda',
+        'PASSWORD': 'fzqIgvY3LMtM',
+        'HOST': 'services.irn9.chabokan.net',
+        'PORT': '16584',
     }
 }
 
