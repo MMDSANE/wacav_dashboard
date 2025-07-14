@@ -688,7 +688,7 @@
                              data-due-date="{{ assignment.due_date|jformat:"%d / %m / %Y"|default_if_none:'بدون مهلت' }}"
                              data-submitted="{% if submissions_map|get_item:assignment.id %}true{% else %}false{% endif %}">
                             <h3>{{ assignment.title }}</h3>
-                            <p>{{ assignment.description|truncatechars:100 }}</p>
+                            <h5>{{ assignment.description|truncatechars:100 }}</h5>
                             <p>⏰ زمان ارسال تا تاریخ {{ assignment.due_date|jformat:"%d / %m / %Y ساعت %H:%m" }} درنظر گرفته شده</p>
                             {% if assignment.file %}
                                 <a href="{% url 'dashboard:download_file' assignment.id %}" class="download-btn">
@@ -725,7 +725,7 @@
                                     </p>
                                 {% else %}
                                     <button class="open-modal-btn submit-btn" {% if submission %}disabled{% endif %}>
-                                        <span>✏️</span> ارسال پاسخ تکلیف
+                                        <span>✏️</span> ارسال پاسخ
                                     </button>
                                 {% endif %}
                             </section>
