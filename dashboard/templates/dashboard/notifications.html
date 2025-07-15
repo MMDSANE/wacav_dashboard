@@ -9,13 +9,12 @@
 
     <style>
         .notification-main-container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
             font-family: 'Vazir', sans-serif;
-            /* حذف margin-left ثابت و استفاده از responsive approach */
-            margin-left: clamp(250px, 20vw, 300px);
-            width: calc(100% - clamp(250px, 20vw, 300px));
+            /* استفاده از padding-right بجای margin */
+            padding-right: 280px; /* فاصله از سایدبار راست */
+            max-width: none;
+            width: 100%;
             box-sizing: border-box;
         }
 
@@ -195,23 +194,20 @@
         /* Media queries برای responsive design */
         @media (max-width: 1200px) {
             .notification-main-container {
-                margin-left: clamp(200px, 18vw, 250px);
-                width: calc(100% - clamp(200px, 18vw, 250px));
+                padding-right: 260px;
             }
         }
 
         @media (max-width: 992px) {
             .notification-main-container {
-                margin-left: clamp(180px, 15vw, 220px);
-                width: calc(100% - clamp(180px, 15vw, 220px));
+                padding-right: 240px;
             }
         }
 
         @media (max-width: 768px) {
             .notification-main-container {
-                margin-left: 0;
-                width: 100%;
-                padding: 10px;
+                padding-right: 20px;
+                padding-left: 20px;
             }
 
             .notification-header-section {
@@ -236,7 +232,7 @@
 
         @media (max-width: 480px) {
             .notification-main-container {
-                padding: 5px;
+                padding: 10px;
             }
 
             .notification-header-section {
@@ -251,7 +247,7 @@
         /* اضافه کردن پشتیبانی برای سایدبار با عرض متغیر */
         @media (min-width: 769px) {
             .notification-main-container {
-                transition: margin-left 0.3s ease, width 0.3s ease;
+                transition: padding-right 0.3s ease;
             }
         }
     </style>
