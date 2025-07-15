@@ -11,9 +11,12 @@
         .notification-main-container {
             max-width: 1200px;
             margin: 0 auto;
-            margin-left: 10%;
             padding: 20px;
             font-family: 'Vazir', sans-serif;
+            /* حذف margin-left ثابت و استفاده از responsive approach */
+            margin-left: clamp(250px, 20vw, 300px);
+            width: calc(100% - clamp(250px, 20vw, 300px));
+            box-sizing: border-box;
         }
 
         .notification-header-section {
@@ -189,11 +192,33 @@
             margin: 0;
         }
 
+        /* Media queries برای responsive design */
+        @media (max-width: 1200px) {
+            .notification-main-container {
+                margin-left: clamp(200px, 18vw, 250px);
+                width: calc(100% - clamp(200px, 18vw, 250px));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .notification-main-container {
+                margin-left: clamp(180px, 15vw, 220px);
+                width: calc(100% - clamp(180px, 15vw, 220px));
+            }
+        }
+
         @media (max-width: 768px) {
+            .notification-main-container {
+                margin-left: 0;
+                width: 100%;
+                padding: 10px;
+            }
+
             .notification-header-section {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+                padding: 15px;
             }
 
             .notification-page-title {
@@ -202,6 +227,31 @@
 
             .notification-meta-info {
                 grid-template-columns: 1fr;
+            }
+
+            .notification-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .notification-main-container {
+                padding: 5px;
+            }
+
+            .notification-header-section {
+                padding: 10px;
+            }
+
+            .notification-page-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* اضافه کردن پشتیبانی برای سایدبار با عرض متغیر */
+        @media (min-width: 769px) {
+            .notification-main-container {
+                transition: margin-left 0.3s ease, width 0.3s ease;
             }
         }
     </style>
