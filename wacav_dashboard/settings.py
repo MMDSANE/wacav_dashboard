@@ -69,8 +69,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.rate_limiter.RateLimiterMiddleware',  # این خط اضافه شده است,
-    'core.middleware.auto_logout.AutoLogoutMiddleware', # این خط اضافه شده است,
+    # 'core.middleware.rate_limiter.RateLimiterMiddleware',  # این خط اضافه شده است,
+    # 'core.middleware.auto_logout.AutoLogoutMiddleware', # این خط اضافه شده است,
 
 ]
 
