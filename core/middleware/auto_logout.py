@@ -14,7 +14,7 @@ class AutoLogoutMiddleware(MiddlewareMixin):
             last_activity_time = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S.%f')
             elapsed = (current_datetime - last_activity_time).total_seconds()
 
-            if elapsed > 3600:  # 3600 ثانیه = 1 ساعت
+            if elapsed > 1800:  # 1800 ثانیه = نیم ساعت
                 logout(request)
                 # پاک کردن سشن
                 request.session.flush()
