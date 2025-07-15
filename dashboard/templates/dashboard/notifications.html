@@ -9,11 +9,13 @@
 
     <style>
         .notification-main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            margin-left: 10%;
             padding: 20px;
             font-family: 'Vazir', sans-serif;
+            /* استفاده از padding-right بجای margin */
+            padding-right: 280px; /* فاصله از سایدبار راست */
+            max-width: none;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .notification-header-section {
@@ -189,11 +191,30 @@
             margin: 0;
         }
 
+        /* Media queries برای responsive design */
+        @media (max-width: 1200px) {
+            .notification-main-container {
+                padding-right: 260px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .notification-main-container {
+                padding-right: 240px;
+            }
+        }
+
         @media (max-width: 768px) {
+            .notification-main-container {
+                padding-right: 20px;
+                padding-left: 20px;
+            }
+
             .notification-header-section {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+                padding: 15px;
             }
 
             .notification-page-title {
@@ -203,12 +224,37 @@
             .notification-meta-info {
                 grid-template-columns: 1fr;
             }
+
+            .notification-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .notification-main-container {
+                padding: 10px;
+            }
+
+            .notification-header-section {
+                padding: 10px;
+            }
+
+            .notification-page-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* اضافه کردن پشتیبانی برای سایدبار با عرض متغیر */
+        @media (min-width: 769px) {
+            .notification-main-container {
+                transition: padding-right 0.3s ease;
+            }
         }
     </style>
 
     <main class="notification-main-container">
         <div class="notification-header-section">
-            <h1 class="notification-page-title">اعلان ها</h1>
+            <h1 class="notification-page-title">اعلان ‌های شما</h1>
             <button class="mark-all-read-button" onclick="markAllAsRead()">مشاهده همه</button>
         </div>
 
