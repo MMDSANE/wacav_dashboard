@@ -61,6 +61,11 @@ INSTALLED_APPS = [
     'ckeditor',
 ]
 
+# تنظیمات session
+AUTO_LOGOUT_TIMEOUT = 3600  # 1 ساعت
+SESSION_COOKIE_AGE = AUTO_LOGOUT_TIMEOUT  # همگام کردن session cookie با auto logout
+SESSION_SAVE_EVERY_REQUEST = True  # ذخیره session در هر درخواست
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,8 +74,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'core.middleware.rate_limiter.RateLimiterMiddleware',  # این خط اضافه شده است,
-    # 'core.middleware.auto_logout.AutoLogoutMiddleware', # این خط اضافه شده است,
+    'core.middleware.rate_limiter.RateLimiterMiddleware',  # این خط اضافه شده است,
+    'core.middleware.auto_logout.AutoLogoutMiddleware', # این خط اضافه شده است,
 
 ]
 
