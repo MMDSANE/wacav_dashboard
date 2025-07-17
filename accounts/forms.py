@@ -8,15 +8,14 @@ class StudentCreationForm(UserCreationForm):
         fields = ('username', 'password')
 
     def clean_username(self):
-        username = self.cleaned_data['username']
-        # اینجا می‌تونی هرچی دلت می‌خواد اجازه بدی؛ مثلاً فارسی و فاصله
+        username = self.cleaned_data['username'].strip()
+        # می‌تونی محدودیت‌های دلخواه اضافه کنی
         return username
 
 class StudentChangeForm(UserChangeForm):
     class Meta:
         model = Student
         fields = ('username', 'password')
-
 
 
 class StudentLoginForm(forms.Form):
@@ -29,3 +28,5 @@ class StudentLoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور'})
     )
 
+    def clean_username(self):
+        return self.cleaned_data['username'].strip()
