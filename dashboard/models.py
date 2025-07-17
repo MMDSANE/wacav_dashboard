@@ -83,6 +83,17 @@ class Assignment(models.Model):
             self.slug = unique_slug
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        if self.file:
+            try:
+                # Check if the file exists before attempting to delete
+                if self.file.storage.exists(self.file.name):
+                    self.file.storage.delete(self.file.name)
+            except Exception as e:
+                # Log the error if needed, but don't interrupt the deletion process
+                print(f"Error deleting file {self.file.name}: {str(e)}")
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.title} - {self.course.title}"
 
@@ -249,6 +260,18 @@ class VideoItem(models.Model):
             base_slug = slugify(self.title, allow_unicode=True)
             self.slug = f"{base_slug}-{uuid4().hex[:6]}"
         super().save(*args, **kwargs)
+
+
+    def delete(self, *args, **kwargs):
+        if self.src:
+            try:
+                # Check if the file exists before attempting to delete
+                if self.src.storage.exists(self.src.name):
+                    self.src.storage.delete(self.src.name)
+            except Exception as e:
+                # Log the error if needed, but don't interrupt the deletion process
+                print(f"Error deleting file {self.src.name}: {str(e)}")
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} ({self.course.title})"
