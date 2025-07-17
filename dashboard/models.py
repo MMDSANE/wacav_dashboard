@@ -68,7 +68,10 @@ class Course(models.Model):
 
 
 class Assignment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments', verbose_name="کلاس مربوطه")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE,
+        related_name='assignments', verbose_name="کلاس مربوطه"
+    )
     title = models.CharField(max_length=MAX_LENGTH_TITLE, verbose_name="عنوان تکلیف")
     description = models.TextField(blank=True, verbose_name="توضیحات تکلیف")
     file = models.FileField(upload_to='assignments/', null=True, blank=True, verbose_name="فایل تکلیف")
@@ -82,6 +85,17 @@ class Assignment(models.Model):
             unique_slug = f"{base_slug}-{uuid4().hex[:6]}"
             self.slug = unique_slug
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.file:
+            try:
+                # Check if the file exists before attempting to delete
+                if self.file.storage.exists(self.file.name):
+                    self.file.storage.delete(self.file.name)
+            except Exception as e:
+                # Log the error if needed, but don't interrupt the deletion process
+                print(f"Error deleting file {self.file.name}: {str(e)}")
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} - {self.course.title}"
@@ -250,9 +264,16 @@ class VideoItem(models.Model):
             self.slug = f"{base_slug}-{uuid4().hex[:6]}"
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.title} ({self.course.title})"
-
+    def delete(self, *args, **kwargs):
+        if self.src:
+            try:
+                # Check if the file exists before attempting to delete
+                if self.src.storage.exists(self.src.name):
+                    self.src.storage.delete(self.src.name)
+            except Exception as e:
+                # Log the error if needed, but don't interrupt the deletion process
+                print(f"Error deleting file {self.src.name}: {str(e)}")
+        super().delete(*args, **kwargs)
 
 class ResourceSection(models.Model):
     course = models.ForeignKey(Course, related_name='resource_sections', on_delete=models.CASCADE, verbose_name='کلاس')
