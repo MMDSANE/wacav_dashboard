@@ -6,8 +6,8 @@ from core.constraints import *
 
 class Student(AbstractUser):
     """
-    مدل دانشجو که از AbstractUser ارث‌بری می‌کند.
-    شامل شماره دانشجویی، شماره تماس، وضعیت و تاریخ ثبت‌نام.
+    مدل دانشجو که از AbstractUser ارثبری میکند.
+    شامل شماره دانشجویی، شماره تماس، وضعیت و تاریخ ثبتنام.
     """
 
     student_id = models.PositiveIntegerField(
@@ -25,10 +25,11 @@ class Student(AbstractUser):
         verbose_name="شماره تماس"
     )
 
+    # بازنویسی فیلدهای موجود در AbstractUser
     username = models.CharField(
         max_length=MAX_USERNAME_LENGTH,
         unique=True,
-        help_text='نام کاربری می‌تواند شامل فاصله و حروف فارسی باشد.',
+        help_text='نام کاربری میتواند شامل فاصله و حروف فارسی باشد.',
         error_messages={
             'unique': "یک کاربر با این نام کاربری وجود دارد.",
         },
@@ -38,14 +39,12 @@ class Student(AbstractUser):
     first_name = models.CharField(
         max_length=MAX_FIRST_NAME_LENGTH,
         blank=True,
-        null=True,
         verbose_name="نام"
     )
 
     last_name = models.CharField(
         max_length=MAX_LAST_NAME_LENGTH,
         blank=True,
-        null=True,
         verbose_name="نام خانوادگی"
     )
 
@@ -55,7 +54,7 @@ class Student(AbstractUser):
     )
 
     class Status(models.TextChoices):
-        REGISTERED = 'RE', 'ثبت‌نام شده'
+        REGISTERED = 'RE', 'ثبت نام شده'
         FINISHED = 'FI', 'اتمام دوره'
 
     status = models.CharField(
@@ -67,8 +66,8 @@ class Student(AbstractUser):
 
     def save(self, *args, **kwargs):
         """
-        به‌صورت خودکار student_id را مقداردهی می‌کند،
-        اگر اولین بار ساخته می‌شود.
+        بهصورت خودکار student_id را مقداردهی میکند،
+        اگر اولین بار ساخته میشود.
         """
         if self.student_id is None:
             last_student = Student.objects.order_by('-student_id').first()
@@ -77,7 +76,7 @@ class Student(AbstractUser):
 
     def full_name(self):
         """
-        نام کامل دانشجو را برمی‌گرداند.
+        نام کامل دانشجو را برمیگرداند.
         """
         return f"{self.first_name or ''} {self.last_name or ''}".strip()
 
