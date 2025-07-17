@@ -157,7 +157,7 @@ class Ticket(models.Model):
     subject = models.CharField(max_length=MAX_LENGTH_SUBJECT, verbose_name='موضوع')
     message = models.TextField(verbose_name='پیام')
 
-    feedback = models.TextField(
+    feedback_ticket = models.TextField(
         blank=True,
         null=True,
         verbose_name="پاسخ ادمین"
