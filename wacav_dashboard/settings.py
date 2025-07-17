@@ -79,6 +79,11 @@ MIDDLEWARE = [
 
 ]
 
+# تنظیمات session
+AUTO_LOGOUT_TIMEOUT = 3600  # 1 ساعت
+SESSION_COOKIE_AGE = AUTO_LOGOUT_TIMEOUT  # همگام کردن session cookie با auto logout
+SESSION_SAVE_EVERY_REQUEST = True  # ذخیره session در هر درخواست
+
 ROOT_URLCONF = 'wacav_dashboard.urls'
 
 TEMPLATES = [

@@ -68,7 +68,10 @@ class Course(models.Model):
 
 
 class Assignment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments', verbose_name="کلاس مربوطه")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE,
+        related_name='assignments', verbose_name="کلاس مربوطه"
+    )
     title = models.CharField(max_length=MAX_LENGTH_TITLE, verbose_name="عنوان تکلیف")
     description = models.TextField(blank=True, verbose_name="توضیحات تکلیف")
     file = models.FileField(upload_to='assignments/', null=True, blank=True, verbose_name="فایل تکلیف")
@@ -168,12 +171,6 @@ class Ticket(models.Model):
     subject = models.CharField(max_length=MAX_LENGTH_SUBJECT, verbose_name='موضوع')
     message = models.TextField(verbose_name='پیام')
 
-    feedback_ticket = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="پاسخ ادمین"
-    )
-
     class Status(models.TextChoices):
         NEW = 'NE', 'جدید'
         IN_PROGRESS = 'IP', 'در حال بررسی'
@@ -185,6 +182,12 @@ class Ticket(models.Model):
         choices=Status.choices,
         default=Status.NEW,
         verbose_name='وضعیت'
+    )
+
+    feedback = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="پاسخ ادمین"
     )
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
@@ -261,7 +264,6 @@ class VideoItem(models.Model):
             self.slug = f"{base_slug}-{uuid4().hex[:6]}"
         super().save(*args, **kwargs)
 
-
     def delete(self, *args, **kwargs):
         if self.src:
             try:
@@ -272,10 +274,6 @@ class VideoItem(models.Model):
                 # Log the error if needed, but don't interrupt the deletion process
                 print(f"Error deleting file {self.src.name}: {str(e)}")
         super().delete(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.title} ({self.course.title})"
-
 
 class ResourceSection(models.Model):
     course = models.ForeignKey(Course, related_name='resource_sections', on_delete=models.CASCADE, verbose_name='کلاس')

@@ -116,6 +116,16 @@ MAX_LENGTH_SUBJECT = 200
 MIN_VALUE_SCORE = 1
 MAX_VALUE_SCORE = 100
 
+# # حداکثر تعداد درخواست هر کاربر روی هر URL در یک دوره زمانی
+# USER_LIMIT_PER_URL = 100
+#
+# # دوره زمانی به ثانیه (30 دقیقه = 1800 ثانیه)
+# TIME_WINDOW_SECONDS = 30 * 60  # 1800 ثانیه
+
+# برای تست می‌تونید مقادیر کمتری استفاده کنید:
+USER_LIMIT_PER_URL = 5000
+TIME_WINDOW_SECONDS = 60  # 1 دقیقه
+
 ###################
 
 
