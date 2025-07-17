@@ -5,11 +5,14 @@ from django.urls import reverse
 from django.contrib.auth import logout
 import logging, json
 from django.http import FileResponse, JsonResponse, Http404
-from django.utils import timezone
 from core.utils import create_course_notification
 from django.views.generic import CreateView, ListView
 from django.urls import reverse_lazy
 import mimetypes, os
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 
 
@@ -318,21 +321,79 @@ def download_file(request, file_id):
 def support_dashboard(request):
     user = request.user
 
-    # فقط دوره‌هایی که دانشجو عضو است
+    # فقط دورههایی که دانشجو عضو است
     user_courses = Course.objects.filter(students=user)
 
-    # به‌روزرسانی نوتیفیکیشن‌ها
+    # بهروزرسانی نوتیفیکیشنها
     update_notifications_for_user(user)
 
-    # تیکت‌های این کاربر
-    tickets = Ticket.objects.filter(student=user).order_by('-created_at')
+    # تیکتهای این کاربر (پایه)
+    tickets = Ticket.objects.filter(student=user).select_related('student')
 
-    # شمارش نوتیفیکیشن‌های جدید
-    new_notifications_count = Notification.objects.filter(course__in=user_courses, is_read=False).count()
+    # پارامترهای سرچ
+    search_query = request.GET.get('search', '').strip()
+    status_filter = request.GET.get('status', '')
+    date_filter = request.GET.get('date_filter', '')
+    sort_by = request.GET.get('sort', '-created_at')
+
+    # سرچ سریع در موضوع، پیام و پاسخ
+    if search_query:
+        tickets = tickets.filter(
+            Q(subject__icontains=search_query) |
+            Q(message__icontains=search_query) |
+            Q(feedback__icontains=search_query)
+        )
+
+    # فیلتر بر اساس وضعیت
+    if status_filter:
+        tickets = tickets.filter(status=status_filter)
+
+    # فیلتر بر اساس تاریخ
+    if date_filter:
+        today = timezone.now().date()
+        if date_filter == 'today':
+            tickets = tickets.filter(created_at__date=today)
+        elif date_filter == 'week':
+            week_ago = today - timedelta(days=7)
+            tickets = tickets.filter(created_at__date__gte=week_ago)
+        elif date_filter == 'month':
+            month_ago = today - timedelta(days=30)
+            tickets = tickets.filter(created_at__date__gte=month_ago)
+    # مرتب‌سازی
+    valid_sort_fields = ['-created_at', 'created_at', '-updated_at', 'updated_at', 'subject', '-subject', 'status']
+    if sort_by in valid_sort_fields:
+        tickets = tickets.order_by(sort_by)
+    else:
+        tickets = tickets.order_by('-created_at')
+
+    # صفحه‌بندی
+    paginator = Paginator(tickets, 6)  # 10 تیکت در هر صفحه
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # شمارش نوتیفیکیشنهای جدید
+    new_notifications_count = Notification.objects.filter(
+        course__in=user_courses,
+        is_read=False
+    ).count()
+
+    # آمار سریع
+    total_tickets = tickets.count()
+    open_tickets = tickets.filter(status__in=['NE', 'IP']).count()
+    closed_tickets = tickets.filter(status='CL').count()
 
     context = {
-        'tickets': tickets,
+        'page_obj': page_obj,
+        'tickets': page_obj,  # برای سازگاری با تمپلیت قدیمی
         'new_notifications_count': new_notifications_count,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'date_filter': date_filter,
+        'sort_by': sort_by,
+        'status_choices': Ticket.Status.choices,
+        'total_tickets': total_tickets,
+        'open_tickets': open_tickets,
+        'closed_tickets': closed_tickets,
     }
     return render(request, 'dashboard/support.html', context)
 

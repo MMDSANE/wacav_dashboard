@@ -8,7 +8,6 @@ from core.managers import ActiveObjectsManager
 from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-from ckeditor.fields import RichTextField
 
 
 
@@ -158,7 +157,6 @@ class Ticket(models.Model):
     subject = models.CharField(max_length=MAX_LENGTH_SUBJECT, verbose_name='موضوع')
     message = models.TextField(verbose_name='پیام')
 
-
     class Status(models.TextChoices):
         NEW = 'NE', 'جدید'
         IN_PROGRESS = 'IP', 'در حال بررسی'
@@ -172,6 +170,12 @@ class Ticket(models.Model):
         verbose_name='وضعیت'
     )
 
+    feedback = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="پاسخ ادمین"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین بروزرسانی')
 
@@ -182,6 +186,12 @@ class Ticket(models.Model):
         verbose_name = 'تیکت'
         verbose_name_plural = 'تیکت‌ها'
         ordering = ['-created_at']
+        # اضافه کردن ایندکس برای بهبود سرچ
+        indexes = [
+            models.Index(fields=['subject']),
+            models.Index(fields=['status']),
+            models.Index(fields=['created_at']),
+        ]
 
 
 class RoadmapStep(models.Model):
