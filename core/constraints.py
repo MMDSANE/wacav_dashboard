@@ -123,7 +123,7 @@ MAX_VALUE_SCORE = 100
 # TIME_WINDOW_SECONDS = 30 * 60  # 1800 ثانیه
 
 # برای تست می‌تونید مقادیر کمتری استفاده کنید:
-USER_LIMIT_PER_URL = 5
+USER_LIMIT_PER_URL = 5000
 TIME_WINDOW_SECONDS = 60  # 1 دقیقه
 
 ###################

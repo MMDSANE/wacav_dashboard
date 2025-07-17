@@ -135,7 +135,7 @@ class TicketAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
 
     fieldsets = (
-        (None, {'fields': ('student', 'subject', 'message')}),
+        (None, {'fields': ('student', 'subject', 'message', 'feedback')}),
         ('وضعیت و تاریخ‌ها', {'fields': ('status', 'created_at', 'updated_at')}),
     )
 

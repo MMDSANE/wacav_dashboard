@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'admin_interface',  # نصب با pip install django-admin-interface
     'colorfield',
     'django_jalali',
-    'ckeditor',
+    # 'ckeditor',
 ]
 
 MIDDLEWARE = [
