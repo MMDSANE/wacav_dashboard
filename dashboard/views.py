@@ -340,8 +340,8 @@ def support_dashboard(request):
     if search_query:
         tickets = tickets.filter(
             Q(subject__icontains=search_query) |
-            Q(message__icontains=search_query)
-            # Q(feedback__icontains=search_query)
+            Q(message__icontains=search_query) |
+            Q(feedback__icontains=search_query)
         )
 
     # فیلتر بر اساس وضعیت
