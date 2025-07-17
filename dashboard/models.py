@@ -170,11 +170,11 @@ class Ticket(models.Model):
         verbose_name='وضعیت'
     )
 
-    feedback = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="پاسخ ادمین"
-    )
+    # feedback = models.TextField(
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="پاسخ ادمین"
+    # )
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین بروزرسانی')

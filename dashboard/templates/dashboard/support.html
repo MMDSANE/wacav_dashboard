@@ -66,12 +66,12 @@
         <div class="ticket-list" id="ticketList">
             {% if tickets %}
                 {% for ticket in tickets %}
-                    <div class="ticket-item" onclick="openViewTicketModal('{{ ticket.id }}', '{{ ticket.subject|escapejs }}', '{{ ticket.message|escapejs }}', '{{ ticket.feedback|escapejs|default:"" }}', '{{ ticket.created_at|jformat:"%Y / %m" }}', '{{ ticket.status }}')">
+                    <div class="ticket-item" onclick="openViewTicketModal('{{ ticket.id }}', '{{ ticket.subject|escapejs }}', '{{ ticket.message|escapejs }}', '{{ ticket.created_at|jformat:"%Y / %m" }}', '{{ ticket.status }}')">
                         <h3>{{ ticket.subject }}</h3>
                         <p>{{ ticket.message|truncatewords:20 }}</p>
-                        {% if ticket.feedback %}
-                            <p><strong>پاسخ مدرس:</strong> {{ ticket.feedback|truncatewords:15 }}</p>
-                        {% endif %}
+{#                        {% if ticket.feedback %}#}
+{#                            <p><strong>پاسخ مدرس:</strong> {{ ticket.feedback|truncatewords:15 }}</p>#}
+{#                        {% endif %}#}
 
                         <div class="ticket-meta">
                             <span>تاریخ: {{ ticket.created_at|jformat:"%d / %m / %Y | %H:%m" }}</span>
@@ -105,8 +105,8 @@
             <div id="view-ticket" style="display: none;">
                 <h2 id="modal-title"></h2>
                 <p id="modal-message"></p>
-                <div id="modal-feedback-container" style="display: none;">
-                    <p id="modal-feedback"></p>
+{#                <div id="modal-feedback-container" style="display: none;">#}
+{#                    <p id="modal-feedback"></p>#}
                 </div>
                 <div class="modal-meta">
 {#                    <p id="modal-submission-date"></p>#}
@@ -615,12 +615,12 @@
             document.getElementById('ticket-form').reset();
         }
 
-        function openViewTicketModal(id, subject, message, feedback, createdAt, status) {
+        function openViewTicketModal(id, subject, message, createdAt, status) {
             const modal = document.getElementById('ticketModal');
             const viewTicket = document.getElementById('view-ticket');
             const newTicket = document.getElementById('new-ticket');
-            const feedbackContainer = document.getElementById('modal-feedback-container');
-            const feedbackElement = document.getElementById('modal-feedback');
+            {#const feedbackContainer = document.getElementById('modal-feedback-container');#}
+            {#const feedbackElement = document.getElementById('modal-feedback');#}
 
             modal.style.display = 'flex';
             viewTicket.style.display = 'block';
@@ -629,12 +629,12 @@
             document.getElementById('modal-title').textContent = subject;
             document.getElementById('modal-message').textContent = 'پیام: ' + message;
 
-            if (feedback && feedback.trim() !== '' && feedback !== 'None') {
-                feedbackContainer.style.display = 'block';
-                feedbackElement.textContent = 'پاسخ مدرس: ' + feedback;
-            } else {
-                feedbackContainer.style.display = 'none';
-            }
+            {#if (feedback && feedback.trim() !== '' && feedback !== 'None') {#}
+            {#    feedbackContainer.style.display = 'block';#}
+            {#    feedbackElement.textContent = 'پاسخ مدرس: ' + feedback;#}
+            {#} else {#}
+            {#    feedbackContainer.style.display = 'none';#}
+            {#}#}
 
             document.getElementById('modal-status').textContent = 'وضعیت: ' + (status === 'NE' ? 'جدید' : status === 'IP' ? 'در حال بررسی' : status === 'AN' ? 'پاسخ داده شده' : 'بسته شده');
         }
