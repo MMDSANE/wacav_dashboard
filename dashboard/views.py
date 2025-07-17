@@ -341,7 +341,7 @@ def support_dashboard(request):
         tickets = tickets.filter(
             Q(subject__icontains=search_query) |
             Q(message__icontains=search_query) |
-            Q(feedback__icontains=search_query)
+            Q(feedback_ticket__icontains=search_query)
         )
 
     # فیلتر بر اساس وضعیت
