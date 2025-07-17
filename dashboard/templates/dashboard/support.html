@@ -13,6 +13,51 @@
             <p class="subtitle">سوالات و مشکلات خود را با ما در میان بگذارید</p>
         </div>
 
+            <!-- Search Section -->
+        <div class="support-dashboard-search-section">
+            <form method="GET" class="support-dashboard-search-form-wrapper">
+                <div class="support-dashboard-search-controls">
+                    <div class="support-dashboard-search-input-wrapper">
+                        <input type="text"
+                               name="search"
+                               value="{{ search_query }}"
+                               placeholder="جستجو در موضوع، پیام، پاسخ یا دوره..."
+                               class="support-dashboard-search-input-field">
+                        <i class="support-dashboard-search-icon">🔍</i>
+                    </div>
+
+                    <select name="status" class="support-dashboard-filter-select">
+                        <option value="">همه وضعیت‌ها</option>
+                        {% for status_key, status_value in status_choices %}
+                            <option value="{{ status_key }}" {% if status_filter == status_key %}selected{% endif %}>
+                                {{ status_value }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="support-dashboard-search-btn">جستجو</button>
+                    <a href="{% url 'dashboard:support_dashboard' %}" class="support-dashboard-clear-btn">پاک کردن</a>
+                </div>
+            </form>
+        </div>
+
+    <!-- Stats Cards -->
+        {% if total_tickets > 0 %}
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_tickets }}</div>
+                <div class="stat-label">کل تیکت‌ها</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ open_tickets }}</div>
+                <div class="stat-label">باز</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ closed_tickets }}</div>
+                <div class="stat-label">بسته شده</div>
+            </div>
+        </div>
+        {% endif %}
+    <br>
         <button class="submit-btn" onclick="openNewTicketModal()">ارسال تیکت جدید</button>
     <br><br>
     <br><br>
@@ -21,9 +66,13 @@
         <div class="ticket-list" id="ticketList">
             {% if tickets %}
                 {% for ticket in tickets %}
-                    <div class="ticket-item" onclick="openViewTicketModal('{{ ticket.id }}', '{{ ticket.subject|escapejs }}', '{{ ticket.message|escapejs }}', '{{ ticket.created_at|jformat:"%Y / %m" }}', '{{ ticket.status }}')">
+                    <div class="ticket-item" onclick="openViewTicketModal('{{ ticket.id }}', '{{ ticket.subject|escapejs }}', '{{ ticket.message|escapejs }}', '{{ ticket.feedback|escapejs|default:"" }}', '{{ ticket.created_at|jformat:"%Y / %m" }}', '{{ ticket.status }}')">
                         <h3>{{ ticket.subject }}</h3>
                         <p>{{ ticket.message|truncatewords:20 }}</p>
+                        {% if ticket.feedback %}
+                            <p><strong>پاسخ مدرس:</strong> {{ ticket.feedback|truncatewords:15 }}</p>
+                        {% endif %}
+
                         <div class="ticket-meta">
                             <span>تاریخ: {{ ticket.created_at|jformat:"%d / %m / %Y | %H:%m" }}</span>
                             <span class="status status-{{ ticket.status|lower }}">{{ ticket.get_status_display }}</span>
@@ -56,8 +105,11 @@
             <div id="view-ticket" style="display: none;">
                 <h2 id="modal-title"></h2>
                 <p id="modal-message"></p>
+                <div id="modal-feedback-container" style="display: none;">
+                    <p id="modal-feedback"></p>
+                </div>
                 <div class="modal-meta">
-                    <p id="modal-submission-date"></p>
+{#                    <p id="modal-submission-date"></p>#}
                     <p id="modal-status"></p>
                 </div>
             </div>
@@ -328,6 +380,20 @@
             line-height: 1.6;
         }
 
+        #modal-feedback-container {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 1px solid #22c55e;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        #modal-feedback {
+            color: #166534;
+            font-weight: 500;
+            margin: 0;
+        }
+
         .modal-meta {
             display: flex;
             flex-wrap: wrap;
@@ -414,6 +480,128 @@
             font-weight: 500;
             padding: 0 12px;
         }
+
+        /* Support Dashboard Search Section Styles */
+        .support-dashboard-search-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        .support-dashboard-search-form-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .support-dashboard-search-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .support-dashboard-search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .support-dashboard-search-input-field {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Vazir', sans-serif;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+        }
+
+        .support-dashboard-search-input-field:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .support-dashboard-search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #6b7280;
+        }
+
+        .support-dashboard-filter-select {
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Vazir', sans-serif;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        .support-dashboard-filter-select:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .support-dashboard-search-btn {
+            padding: 12px 24px;
+            background-color: #6366f1;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Vazir', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .support-dashboard-search-btn:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .support-dashboard-clear-btn {
+            padding: 12px 24px;
+            background-color: #ef4444;
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Vazir', sans-serif;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .support-dashboard-clear-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .support-dashboard-search-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .support-dashboard-filter-select,
+            .support-dashboard-search-btn,
+            .support-dashboard-clear-btn {
+                width: 100%;
+            }
+        }
     </style>
 
     <script>
@@ -427,16 +615,27 @@
             document.getElementById('ticket-form').reset();
         }
 
-        function openViewTicketModal(id, subject, message, createdAt, status) {
+        function openViewTicketModal(id, subject, message, feedback, createdAt, status) {
             const modal = document.getElementById('ticketModal');
             const viewTicket = document.getElementById('view-ticket');
             const newTicket = document.getElementById('new-ticket');
+            const feedbackContainer = document.getElementById('modal-feedback-container');
+            const feedbackElement = document.getElementById('modal-feedback');
+
             modal.style.display = 'flex';
             viewTicket.style.display = 'block';
             newTicket.style.display = 'none';
+
             document.getElementById('modal-title').textContent = subject;
             document.getElementById('modal-message').textContent = 'پیام: ' + message;
-            document.getElementById('modal-submission-date').textContent = 'تاریخ ارسال: ' + createdAt;
+
+            if (feedback && feedback.trim() !== '' && feedback !== 'None') {
+                feedbackContainer.style.display = 'block';
+                feedbackElement.textContent = 'پاسخ مدرس: ' + feedback;
+            } else {
+                feedbackContainer.style.display = 'none';
+            }
+
             document.getElementById('modal-status').textContent = 'وضعیت: ' + (status === 'NE' ? 'جدید' : status === 'IP' ? 'در حال بررسی' : status === 'AN' ? 'پاسخ داده شده' : 'بسته شده');
         }
 
