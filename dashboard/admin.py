@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from .models import *
 from django_jalali.admin.filters import JDateFieldListFilter
 
+
 # شخصی‌سازی هدر و تایتل کلی
 admin.site.site_header = '🎓 پنل مدیریت کلاس‌ها و تکالیف'
 admin.site.site_title = 'داشبورد مدیریت'
