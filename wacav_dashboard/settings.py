@@ -25,21 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ########################################
 # با python-decouple برای امنیت اطلاعات
-SECRET_KEY = "django-insecure-tli!1i7r%09$!q95foq7%!ad+xylgz&ucujao#i)lnl4bh5xr0"
-DEBUG = False
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 ###########################################
 
-ALLOWED_HOSTS = ['wacav-dashboard.chbk.app', 'panel.wacav.ir', 'www.panel.wacav.ir', '127.0.0.1']
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://wacav-dashboard.chbk.app',
-    'https://wacav-dashboard.chbk.app',
-    'http://panel.wacav.ir',
-    'https://panel.wacav.ir',
-    'http://127.0.0.1',
-
-]
-
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -61,11 +51,6 @@ INSTALLED_APPS = [
     # 'ckeditor',
 ]
 
-# تنظیمات session
-AUTO_LOGOUT_TIMEOUT = 3600  # 1 ساعت
-SESSION_COOKIE_AGE = AUTO_LOGOUT_TIMEOUT  # همگام کردن session cookie با auto logout
-SESSION_SAVE_EVERY_REQUEST = True  # ذخیره session در هر درخواست
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,6 +63,11 @@ MIDDLEWARE = [
     'core.middleware.auto_logout.AutoLogoutMiddleware', # این خط اضافه شده است,
 
 ]
+
+# تنظیمات session
+AUTO_LOGOUT_TIMEOUT = 3600  # 1 ساعت
+SESSION_COOKIE_AGE = AUTO_LOGOUT_TIMEOUT  # همگام کردن session cookie با auto logout
+SESSION_SAVE_EVERY_REQUEST = True  # ذخیره session در هر درخواست
 
 ROOT_URLCONF = 'wacav_dashboard.urls'
 
@@ -115,12 +105,11 @@ WSGI_APPLICATION = 'wacav_dashboard.wsgi.application'
 # نگران ارسال این اطلاعات در گیت‌هاب نباشید در گیت ایگنور میگردد و هر کس بصورت جداگانه فایل .env خود را در سیستم شخصی دارد
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wacav990_linda',
-        'USER': 'wacav990_linda',
-        'PASSWORD': 'fzqIgvY3LMtM',
-        'HOST': 'services.irn9.chabokan.net',
-        'PORT': '16584',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -161,12 +150,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
